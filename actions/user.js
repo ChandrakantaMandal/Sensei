@@ -16,30 +16,32 @@ export async function updateUser(data) {
   if (!user) throw new Error("User not found");
 
   try {
-    // Start a transaction to handle both operations
     const result = await db.$transaction(
       async (tx) => {
-        // First check if industry exists
         let industryInsight = await tx.industryInsight.findUnique({
           where: {
             industry: data.industry,
           },
         });
 
-        // If industry doesn't exist, create it with default values
         if (!industryInsight) {
-          const insights = await generateAIInsights(data.industry);
-
-          industryInsight = await db.industryInsight.create({
+          console.log("Creating default industry insight for:", data.industry);
+          industryInsight = await tx.industryInsight.create({
             data: {
               industry: data.industry,
-              ...insights,
+              salaryRanges: [],
+              growthRate: 0,
+              demandLevel: "MEDIUM",
+              topSkills: [],
+              marketOutlook: "NEUTRAL",
+              keyTrends: [],
+              recommendedSkills: [],
               nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
             },
           });
+          console.log("Industry insight created:", industryInsight);
         }
 
-        // Now update the user
         const updatedUser = await tx.user.update({
           where: {
             id: user.id,
@@ -55,15 +57,15 @@ export async function updateUser(data) {
         return { updatedUser, industryInsight };
       },
       {
-        timeout: 10000, // default: 5000
+        timeout: 10000,
       },
     );
 
     revalidatePath("/");
     return { success: true, ...result };
   } catch (error) {
-    console.error("Error updating user and industry:", error.message);
-    throw new Error("Failed to update profile");
+    console.error("Error updating user and industry:", error);
+    throw new Error(error.message || "Failed to update profile");
   }
 }
 

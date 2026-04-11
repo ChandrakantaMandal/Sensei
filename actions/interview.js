@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
 
 export async function generateQuiz() {
   const { userId } = await auth();
@@ -20,13 +20,15 @@ export async function generateQuiz() {
   });
 
   if (!user) throw new Error("User not found");
+  if (!user.industry) throw new Error("Please complete your profile first");
+
+  const industry = user.industry.split("-")[0];
+  const skills = user.skills || [];
 
   const prompt = `
-    Generate 10 technical interview questions for a ${
-      user.industry
-    } professional${
-    user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
-  }.
+    Generate 10 technical interview questions for a ${industry} professional${
+      skills.length ? ` with expertise in ${skills.join(", ")}` : ""
+    }.
     
     Each question should be multiple choice with 4 options.
     
@@ -50,10 +52,14 @@ export async function generateQuiz() {
     const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
     const quiz = JSON.parse(cleanedText);
 
+    if (!quiz.questions || !Array.isArray(quiz.questions)) {
+      throw new Error("Invalid quiz format");
+    }
+
     return quiz.questions;
   } catch (error) {
-    console.error("Error generating quiz:", error);
-    throw new Error("Failed to generate quiz questions");
+    console.error("Error generating quiz:", error.message);
+    throw new Error(error.message || "Failed to generate quiz questions");
   }
 }
 
@@ -84,7 +90,7 @@ export async function saveQuizResult(questions, answers, score) {
     const wrongQuestionsText = wrongAnswers
       .map(
         (q) =>
-          `Question: "${q.question}"\nCorrect Answer: "${q.answer}"\nUser Answer: "${q.userAnswer}"`
+          `Question: "${q.question}"\nCorrect Answer: "${q.answer}"\nUser Answer: "${q.userAnswer}"`,
       )
       .join("\n\n");
 

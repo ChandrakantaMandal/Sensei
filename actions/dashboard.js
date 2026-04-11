@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
 export const generateAIInsights = async (industry) => {
   const prompt = `
@@ -33,7 +33,17 @@ export const generateAIInsights = async (industry) => {
   const text = response.text();
   const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
 
-  return JSON.parse(cleanedText);
+  const parsed = JSON.parse(cleanedText);
+  
+  return {
+    salaryRanges: parsed.salaryRanges,
+    growthRate: parsed.growthRate,
+    demandLevel: parsed.demandLevel.toUpperCase(),
+    topSkills: parsed.topSkills,
+    marketOutlook: parsed.marketOutlook.toUpperCase(),
+    keyTrends: parsed.keyTrends,
+    recommendedSkills: parsed.recommendedSkills,
+  };
 };
 
 export async function getIndustryInsights() {

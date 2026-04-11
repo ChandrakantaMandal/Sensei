@@ -1,4 +1,3 @@
-import { err } from "inngest/types";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -7,7 +6,7 @@ const useFetch = (cb) => {
   const [loading, setLoading] = useState(null);
   const [error, setError] = useState(null);
 
-  const fn = async () => {
+  const fn = async (...args) => {
     setLoading(true);
     setError(null);
 
@@ -23,7 +22,7 @@ const useFetch = (cb) => {
     }
   };
 
-  return { data, loading, err, fn, setData };
+  return { data, loading, error, fn, setData };
 };
 
 export default useFetch;
