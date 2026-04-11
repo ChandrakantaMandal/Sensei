@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SensAI - AI Career Coach
 
-## Getting Started
+An intelligent career coaching application built with Next.js 16 that helps users with resume building, interview preparation, cover letter generation, and career insights.
 
-First, run the development server:
+## Features
+
+### 🎯 Dashboard
+- Industry insights and market overview
+- Salary ranges by role visualization
+- Growth rate and demand level indicators
+- Key industry trends and recommended skills
+
+### 📝 Resume Builder
+- Create and edit professional resumes
+- Markdown editor with live preview
+- Export to PDF
+- AI-powered content suggestions
+
+### 🎤 Interview Practice
+- Generate technical interview questions
+- Multiple choice format with explanations
+- Track quiz history and performance
+- Personalized improvement tips
+
+### ✉️ AI Cover Letter Generator
+- Generate cover letters based on job descriptions
+- AI-powered content tailored to your industry
+- Save and manage multiple cover letters
+
+### 👤 Onboarding
+- Industry and specialization selection
+- Experience and skills profiling
+- Professional bio creation
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **UI**: React 19, Tailwind CSS, shadcn/ui
+- **Authentication**: Clerk
+- **Database**: PostgreSQL with Prisma
+- **AI**: Google Gemini API
+- **State Management**: React Hook Form + Zod
+- **Charts**: Recharts
+- **Background Jobs**: Inngest
+
+## Prerequisites
+
+- Node.js 18+
+- PostgreSQL database
+- Google Cloud API key (Gemini)
+- Clerk account for authentication
+
+## Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd sensai
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+
+# Generate Prisma client
+npx prisma generate
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment Variables
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Create a `.env` file with:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
 
-## Learn More
+# Database
+DATABASE_URL=postgresql://...
 
-To learn more about Next.js, take a look at the following resources:
+# Google Gemini API
+GEMINI_API_KEY=AIza...
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+sensai/
+├── actions/              # Server actions
+│   ├── dashboard.js      # AI insights generation
+│   ├── interview.js      # Quiz generation
+│   ├── cover-letter.js  # Cover letter generation
+│   ├── resume.js        # Resume handling
+│   └── user.js          # User profile management
+├── app/
+│   ├── (main)/          # Protected routes
+│   │   ├── dashboard/   # Dashboard with insights
+│   │   ├── resume/     # Resume builder
+│   │   ├── interview/  # Interview practice
+│   │   ├── onboarding/ # User onboarding
+│   │   └── ai-cover-letter/ # Cover letters
+│   ├── (auth)/          # Authentication routes
+│   └── api/             # API routes
+├── components/           # React components
+├── lib/                 # Utilities and configs
+├── prisma/              # Database schema
+└── data/                # Static data (industries, etc.)
+```
 
-## Deploy on Vercel
+## Available Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
