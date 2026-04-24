@@ -54,7 +54,7 @@ An intelligent career coaching application built with Next.js 16 that helps user
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone <https://github.com/ChandrakantaMandal/Sensei>
 cd sensai
 
 # Install dependencies
